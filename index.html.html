@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Чек-лист: як зібрати речі на тиждень</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f4ee;
+        --paper: #fffdf8;
+        --ink: #272522;
+        --muted: #6c665e;
+        --line: #ded6ca;
+        --accent: #2f7f74;
+        --accent-dark: #1f5d55;
+        --soft: #eaf3f0;
+        --warn: #9b5f33;
+        --shadow: 0 18px 48px rgba(58, 48, 34, 0.14);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--ink);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      main {
+        width: min(860px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 32px 0;
+      }
+
+      .sheet {
+        overflow: hidden;
+        background: var(--paper);
+        border: 1px solid rgba(88, 74, 55, 0.14);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+
+      .hero {
+        padding: clamp(28px, 6vw, 52px);
+        border-bottom: 1px solid var(--line);
+        background:
+          linear-gradient(135deg, rgba(47, 127, 116, 0.13), transparent 58%),
+          var(--paper);
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        color: var(--accent-dark);
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        max-width: 720px;
+        margin: 0;
+        font-size: clamp(34px, 6vw, 58px);
+        line-height: 1.02;
+        letter-spacing: 0;
+      }
+
+      .summary {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 20px;
+        align-items: center;
+        padding: 22px clamp(22px, 5vw, 44px);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .progress-wrap {
+        min-width: 0;
+      }
+
+      .progress-label {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 10px;
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      .progress-track {
+        overflow: hidden;
+        height: 12px;
+        background: #e8e0d5;
+        border-radius: 999px;
+      }
+
+      .progress-bar {
+        width: 0;
+        height: 100%;
+        background: var(--accent);
+        border-radius: inherit;
+        transition: width 180ms ease;
+      }
+
+      button {
+        min-height: 42px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fffaf0;
+        color: var(--ink);
+        cursor: pointer;
+        font: inherit;
+        font-weight: 700;
+        padding: 10px 14px;
+      }
+
+      button:hover {
+        border-color: rgba(47, 127, 116, 0.45);
+        color: var(--accent-dark);
+      }
+
+      .content {
+        padding: 14px clamp(18px, 5vw, 44px) 40px;
+      }
+
+      section {
+        padding-top: 26px;
+      }
+
+      h2 {
+        margin: 0 0 14px;
+        font-size: 21px;
+        line-height: 1.2;
+        letter-spacing: 0;
+      }
+
+      .list {
+        display: grid;
+        gap: 10px;
+      }
+
+      label {
+        display: grid;
+        grid-template-columns: 28px 1fr;
+        gap: 10px;
+        align-items: start;
+        padding: 10px 12px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        color: var(--ink);
+        font-size: 18px;
+        line-height: 1.35;
+      }
+
+      label:hover {
+        background: #fbf5e9;
+        border-color: rgba(88, 74, 55, 0.1);
+      }
+
+      input[type="checkbox"] {
+        appearance: none;
+        display: grid;
+        place-items: center;
+        width: 22px;
+        height: 22px;
+        margin: 1px 0 0;
+        border: 1.7px solid #71695f;
+        border-radius: 4px;
+        background: #fff;
+        cursor: pointer;
+      }
+
+      input[type="checkbox"]::before {
+        content: "";
+        width: 12px;
+        height: 7px;
+        border: solid #fff;
+        border-width: 0 0 2.5px 2.5px;
+        transform: rotate(-45deg) scale(0);
+        transform-origin: center;
+      }
+
+      input[type="checkbox"]:checked {
+        border-color: var(--accent);
+        background: var(--accent);
+      }
+
+      input[type="checkbox"]:checked::before {
+        transform: rotate(-45deg) scale(1);
+      }
+
+      input[type="checkbox"]:checked + span {
+        color: var(--muted);
+        text-decoration: line-through;
+        text-decoration-thickness: 1.5px;
+      }
+
+      .note {
+        margin: 26px 0 0;
+        padding: 14px 16px;
+        border-left: 4px solid var(--accent);
+        background: var(--soft);
+        color: var(--accent-dark);
+        font-size: 15px;
+        line-height: 1.45;
+      }
+
+      .confirm {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        max-width: min(360px, calc(100vw - 36px));
+        padding: 12px 14px;
+        border: 1px solid rgba(47, 127, 116, 0.22);
+        border-radius: 8px;
+        background: #fffdf8;
+        box-shadow: 0 16px 34px rgba(58, 48, 34, 0.2);
+        color: var(--accent-dark);
+        font-size: 14px;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(8px);
+        transition:
+          opacity 160ms ease,
+          transform 160ms ease;
+      }
+
+      .confirm.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 640px) {
+        main {
+          width: 100%;
+          padding: 0;
+        }
+
+        .sheet {
+          min-height: 100vh;
+          border: 0;
+          border-radius: 0;
+        }
+
+        .summary {
+          grid-template-columns: 1fr;
+        }
+
+        button {
+          width: 100%;
+        }
+
+        label {
+          grid-template-columns: 26px 1fr;
+          padding: 10px 4px;
+          font-size: 17px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <article class="sheet">
+        <header class="hero">
+          <p class="eyebrow">Персональний чек-лист</p>
+          <h1>Чек-лист: як зібрати речі на тиждень і не взяти зайвого</h1>
+        </header>
+
+        <div class="summary" aria-live="polite">
+          <div class="progress-wrap">
+            <div class="progress-label">
+              <span>Готовність</span>
+              <strong id="progressText">0 з 0</strong>
+            </div>
+            <div class="progress-track" aria-hidden="true">
+              <div class="progress-bar" id="progressBar"></div>
+            </div>
+          </div>
+          <button type="button" id="resetButton">Скинути галочки</button>
+        </div>
+
+        <div class="content">
+          <section>
+            <h2>Одяг</h2>
+            <div class="list">
+              <label><input type="checkbox" data-id="looks" /><span>Продумайте образи на кожен день</span></label>
+              <label><input type="checkbox" data-id="palette" /><span>Оберіть одну базову кольорову гаму, щоб усі речі поєднувалися між собою</span></label>
+              <label><input type="checkbox" data-id="tops" /><span>Візьміть 5-7 верхів: футболки, сорочки або топи</span></label>
+              <label><input type="checkbox" data-id="bottoms" /><span>Візьміть 2-3 низи: шорти, спідниці або штани</span></label>
+              <label><input type="checkbox" data-id="warm-layer" /><span>Покладіть 1 легку кофту або худі</span></label>
+              <label><input type="checkbox" data-id="evening-outfit" /><span>Візьміть 1 комплект одягу для вечора або особливої події</span></label>
+              <label><input type="checkbox" data-id="homewear" /><span>Покладіть піжаму та домашній одяг</span></label>
+              <label><input type="checkbox" data-id="underwear" /><span>Візьміть білизну та шкарпетки на кожен день + 1 запасний комплект</span></label>
+            </div>
+          </section>
+
+          <section>
+            <h2>Взуття</h2>
+            <div class="list">
+              <label><input type="checkbox" data-id="daily-shoes" /><span>Обмежтеся 1 парою зручного повсякденного взуття</span></label>
+              <label><input type="checkbox" data-id="beach-shoes" /><span>Додайте взуття для пляжу або прогулянок</span></label>
+              <label><input type="checkbox" data-id="evening-shoes" /><span>Візьміть вечірню пару тільки якщо вона справді потрібна</span></label>
+            </div>
+          </section>
+
+          <section>
+            <h2>Організація валізи</h2>
+            <div class="list">
+              <label><input type="checkbox" data-id="organizers" /><span>Розкладіть речі по органайзерах за категоріями</span></label>
+              <label><input type="checkbox" data-id="laundry-bag" /><span>Покладіть окремий мішечок для брудної білизни</span></label>
+              <label><input type="checkbox" data-id="cosmetic-bag" /><span>Зберіть косметичку в одному прозорому або щільному органайзері</span></label>
+              <label><input type="checkbox" data-id="meds" /><span>Окремо складіть аптечку та щоденні засоби</span></label>
+              <label><input type="checkbox" data-id="documents" /><span>Перевірте документи, квитки, зарядні пристрої та павербанк</span></label>
+            </div>
+          </section>
+
+          <p class="note">
+            Галочки зберігаються тільки в браузері людини, яка відкрила сторінку.
+            На іншому телефоні або після очищення даних сайту чек-лист почнеться заново.
+          </p>
+        </div>
+      </article>
+    </main>
+
+    <div class="confirm" id="confirmMessage">Збережено у вашому браузері</div>
+
+    <script>
+      const storageKey = "travel-week-checklist-v1";
+      const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+      const progressText = document.querySelector("#progressText");
+      const progressBar = document.querySelector("#progressBar");
+      const resetButton = document.querySelector("#resetButton");
+      const confirmMessage = document.querySelector("#confirmMessage");
+      let confirmTimer;
+
+      function readSavedState() {
+        try {
+          return JSON.parse(localStorage.getItem(storageKey)) || {};
+        } catch {
+          return {};
+        }
+      }
+
+      function saveState() {
+        const state = {};
+        checkboxes.forEach((checkbox) => {
+          state[checkbox.dataset.id] = checkbox.checked;
+        });
+        localStorage.setItem(storageKey, JSON.stringify(state));
+      }
+
+      function updateProgress() {
+        const done = checkboxes.filter((checkbox) => checkbox.checked).length;
+        const total = checkboxes.length;
+        const percent = total ? Math.round((done / total) * 100) : 0;
+        progressText.textContent = `${done} з ${total}`;
+        progressBar.style.width = `${percent}%`;
+      }
+
+      function showConfirm() {
+        clearTimeout(confirmTimer);
+        confirmMessage.classList.add("is-visible");
+        confirmTimer = setTimeout(() => {
+          confirmMessage.classList.remove("is-visible");
+        }, 1200);
+      }
+
+      function restoreState() {
+        const savedState = readSavedState();
+        checkboxes.forEach((checkbox) => {
+          checkbox.checked = savedState[checkbox.dataset.id] === true;
+        });
+        updateProgress();
+      }
+
+      checkboxes.forEach((checkbox) => {
+        checkbox.addEventListener("change", () => {
+          saveState();
+          updateProgress();
+          showConfirm();
+        });
+      });
+
+      resetButton.addEventListener("click", () => {
+        checkboxes.forEach((checkbox) => {
+          checkbox.checked = false;
+        });
+        saveState();
+        updateProgress();
+        showConfirm();
+      });
+
+      restoreState();
+    </script>
+  </body>
+</html>
